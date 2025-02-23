@@ -13,12 +13,21 @@ const io = new Server(server, {
   },
 });
 
+let isSpinning = false;
+
 io.on("connection", (socket) => {
   console.log("Novo usuário conectado: ", socket.id);
 
-  socket.on("mensagem", (data) => {
-    console.log("Mensagem recebida: ", data);
-    io.emit("mensagem", data); // Reenvia a mensagem para todos os clientes
+  socket.emit("estado", isSpinning);
+
+  socket.on("start", () => {
+    isSpinning = true;
+    io.emit("estado", isSpinning);
+  });
+
+  socket.on("stop", () => {
+    isSpinning = false;
+    io.emit("estado", isSpinning);
   });
 
   socket.on("disconnect", () => {
